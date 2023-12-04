@@ -9,19 +9,15 @@ function firstPart(rows) {
     let winningNumbersSet = new Set(winningNumbers.split(' ').filter(n => n !== ''));
     let myNumbersList = myNumbers.split(' ').filter(n => n !== '');
 
-    let points = 0;
     let matches = 0;
     for (let i = 0; i < myNumbersList.length; i++) {
       if (winningNumbersSet.has(myNumbersList[i])) {
-        if (matches === 0) {
-          points++;
-        } else {
-          points <<= 1;
-        }
         matches++;
       }
     }
-    totalPoints += points;
+    if (matches > 0) {
+      totalPoints += (1 << (matches - 1));
+    }
   });
   return totalPoints;
 }
