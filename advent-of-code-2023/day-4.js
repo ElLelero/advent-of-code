@@ -47,7 +47,7 @@ function secondPart(rows) {
     return dict;
   }, {});
 
-  let totalScartchcards = 0;
+  let totalScratchcards = 0;
 
   for (let i = 0; i < rows.length; i++) {
     let row = rows[i];
@@ -63,10 +63,10 @@ function secondPart(rows) {
       results[cardIndex] += copies;
     }
 
-    totalScartchcards += copies;
+    totalScratchcards += copies;
   }
 
-  return totalScartchcards;
+  return totalScratchcards;
 }
 
 fs.readFile('./advent-of-code-2023/inputs/day-4.txt', { encoding: 'utf8' }).then((data) => {
@@ -77,8 +77,8 @@ fs.readFile('./advent-of-code-2023/inputs/day-4.txt', { encoding: 'utf8' }).then
   console.timeEnd('first part');
 
   console.time('second part');
-  let totalScartchcards = secondPart(rows);
+  let totalScratchcards = secondPart(rows);
   console.timeEnd('second part');
 
-  console.log(totalWinningPoints, totalScartchcards);
+  console.log(totalWinningPoints, totalScratchcards);
 });
