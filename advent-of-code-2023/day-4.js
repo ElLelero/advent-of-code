@@ -63,7 +63,7 @@ function secondPart(rows) {
       results[cardIndex] += copies;
     }
 
-    totalScartchcards+=results[i];
+    totalScartchcards += copies;
   }
 
   return totalScartchcards;
