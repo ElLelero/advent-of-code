@@ -27,18 +27,18 @@ function firstPart(rows) {
 }
 
 function getMatchesForCard(rowIndex, myNumbers, winningNumbers) {
-  let elementsToAdd = [];
+  let cardsToPlay = [];
   let matches = 0;
   let winningNumbersSet = new Set(winningNumbers.split(' ').filter(n => n !== ''));
   let myNumbersList = myNumbers.split(' ').filter(n => n !== '');
 
   for (let i = 0; i < myNumbersList.length; i++) {
     if (winningNumbersSet.has(myNumbersList[i])) {
-      elementsToAdd.push((+rowIndex) + matches + 1);
+      cardsToPlay.push((+rowIndex) + matches + 1);
       matches++;
     }
   }
-  return elementsToAdd;
+  return cardsToPlay;
 }
 
 function secondPart(rows) {
