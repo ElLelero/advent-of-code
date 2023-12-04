@@ -38,28 +38,25 @@ function getMatchesForCard(rowIndex, myNumbers, winningNumbers) {
 }
 
 function secondPart(rows) {
-  let results = rows.map((row, i) => i).reduce((dict, index) => {
-    dict[index] = 1;
-    return dict;
-  }, {});
-
+  let results = {};
   let totalScratchcards = 0;
 
   for (let i = 0; i < rows.length; i++) {
     let row = rows[i];
-    let copies = results[i];
+    
+    results[i] = ((results[i] ?? 0) + 1);
 
     let [card, myNumbers] = row.split(' | ');
     let [cardNumber, winningNumbers] = card.split(': ');
 
     let cardsToPlay = getMatchesForCard(i, myNumbers, winningNumbers);
-    for (let i = 0; i < cardsToPlay.length; i++) {
-      let cardIndex = +(cardsToPlay[i]);
+    for (let j = 0; j < cardsToPlay.length; j++) {
+      let cardIndex = +(cardsToPlay[j]);
       if (results[cardIndex] == null) results[cardIndex] = 0;
-      results[cardIndex] += copies;
+      results[cardIndex] += results[i];
     }
 
-    totalScratchcards += copies;
+    totalScratchcards += results[i];
   }
 
   return totalScratchcards;
