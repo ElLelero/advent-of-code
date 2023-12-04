@@ -30,7 +30,7 @@ function getMatchesForCard(rowIndex, myNumbers, winningNumbers) {
 
   for (let i = 0; i < myNumbersList.length; i++) {
     if (winningNumbersSet.has(myNumbersList[i])) {
-      cardsToPlay.push((+rowIndex) + matches + 1);
+      cardsToPlay.push(rowIndex + matches + 1);
       matches++;
     }
   }
