@@ -15,23 +15,19 @@ function firstPart(rows) {
 
     waysToBeatTheRecord = (waysToBeatTheRecord ?? 1) * (Math.floor(x2) - Math.floor(x1));
   }
-  return waysToBeatTheRecord;
+  return waysToBeatTheRecord ?? 0;
 }
 
 function secondPart(rows) {
-  let time = rows[0].substring(6).trim().split(' ').filter(n => n !== '').join('');
-  let maxDistance = rows[1].substring(10).trim().split(' ').filter(n => n !== '').join('');
-
-  let waysToBeatTheRecord = null;
+  let time = +(rows[0].substring(6).trim().split(' ').join(''));
+  let maxDistance = +(rows[1].substring(10).trim().split(' ').join(''));
 
   let sqrtDelta = Math.sqrt(time * time - 4 * maxDistance);
 
   let x1 = (-time + sqrtDelta) / -2.0;
   let x2 = (-time - sqrtDelta) / -2.0;
 
-  waysToBeatTheRecord = Math.floor(x2) - Math.floor(x1);
-
-  return waysToBeatTheRecord;
+  return Math.floor(x2) - Math.floor(x1);
 }
 
 fs.readFile('./advent-of-code-2023/inputs/day-6.txt', { encoding: 'utf8' }).then((data) => {
