@@ -71,9 +71,6 @@ function createLists(rows) {
   if (temp.length > 0) {
     lists[map] = [...temp];
   }
-  Object.entries(lists).forEach(([name, list]) => {
-    list.sort();
-  });
   return lists;
 }
 
@@ -105,7 +102,6 @@ function secondPart(rows) {
     });
   }
   let lists = createLists(rows);
-  let minLocation = undefined;
 
   let ranges = [...seedsRange];
   let listsKeys = Object.keys(lists);
@@ -117,12 +113,7 @@ function secondPart(rows) {
     ranges = [...newRanges];
   });
 
-  let min = Math.min.apply(Math, ranges.map(range => range.start));
-  if (min < minLocation || minLocation == null) {
-    minLocation = min;
-  }
-
-  return minLocation;
+  return Math.min.apply(Math, ranges.map(range => range.start));
 }
 
 
