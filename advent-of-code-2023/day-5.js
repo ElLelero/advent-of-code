@@ -52,8 +52,7 @@ function createLists(rows) {
         if (row.indexOf(' map')) {
           map = row.split(' map')[0];
         }
-      }
-      else {
+      } else {
         let [destinationRangeStart, sourceRangeStart, rangeLength] = row.split(' ').filter(n => n !== '').map(n => +n);
         temp.push({
           destinationRangeStart,
@@ -82,25 +81,14 @@ function firstPart(rows) {
   let seeds = rows[0].split('seeds: ')[1].split(' ').filter(n => n !== '').map(n => +n);
 
   let lists = createLists(rows);
-
-  let soils = [], fertilizers = [], waters = [], humidities = [], temperatures = [], lights = [];
+  let listsKeys = Object.keys(lists);
 
   let locations = seeds.map(seed => {
-    let soil = findValue(lists['seed-to-soil'], seed);
-    soils.push(soil);
-    let fertilizer = findValue(lists['soil-to-fertilizer'], soil);
-    fertilizers.push(fertilizer);
-    let water = findValue(lists['fertilizer-to-water'], fertilizer);
-    waters.push(water);
-    let light = findValue(lists['water-to-light'], water);
-    lights.push(light);
-    let temperature = findValue(lists['light-to-temperature'], light);
-    temperatures.push(temperature);
-    let humidity = findValue(lists['temperature-to-humidity'], temperature);
-    humidities.push(humidity);
-    let location = findValue(lists['humidity-to-location'], humidity);
-
-    return location;
+    let value = seed;
+    listsKeys.forEach(key => {
+      value = findValue(lists[key], value);
+    });
+    return value;
   });
 
   return Math.min.apply(Math, locations);
@@ -118,38 +106,21 @@ function secondPart(rows) {
   }
   let lists = createLists(rows);
   let minLocation = undefined;
-  seedsRange.forEach(seedRange => {
-    let soilRanges = findRanges(lists['seed-to-soil'], seedRange) ?? [seedRange];
-    soilRanges.forEach(soilRange => {
 
-      let fertilizerRanges = findRanges(lists['soil-to-fertilizer'], soilRange) ?? [soilRange];
-      fertilizerRanges.forEach(fertilizerRange => {
-
-        let waterRanges = findRanges(lists['fertilizer-to-water'], fertilizerRange) ?? [fertilizerRange];
-        waterRanges.forEach(waterRange => {
-
-          let lightRanges = findRanges(lists['water-to-light'], waterRange) ?? [waterRange];
-          lightRanges.forEach(lightRange => {
-
-            let temperatureRanges = findRanges(lists['light-to-temperature'], lightRange) ?? [lightRange];
-            temperatureRanges.forEach(temperatureRange => {
-
-              let humidityRanges = findRanges(lists['temperature-to-humidity'], temperatureRange) ?? [temperatureRange];
-              humidityRanges.forEach(humidityRange => {
-
-                let locationRanges = findRanges(lists['humidity-to-location'], humidityRange) ?? [humidityRange];
-
-                let min = Math.min.apply(Math, locationRanges.map(range => range.start));
-                if (min < minLocation || minLocation == null) {
-                  minLocation = min;
-                }
-              });
-            });
-          });
-        });
-      });
+  let ranges = [...seedsRange];
+  let listsKeys = Object.keys(lists);
+  listsKeys.forEach(key => {
+    let newRanges = [];
+    ranges.forEach(range => {
+      newRanges.push(...(findRanges(lists[key], range) ?? [range]));
     });
+    ranges = [...newRanges];
   });
+
+  let min = Math.min.apply(Math, ranges.map(range => range.start));
+  if (min < minLocation || minLocation == null) {
+    minLocation = min;
+  }
 
   return minLocation;
 }
