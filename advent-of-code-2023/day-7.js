@@ -24,7 +24,7 @@ function convertCardToNumber(card, mode) {
   return cardToNumber[card] ?? (+card);
 }
 
-function maximizeHand(hand) {
+function maximize(hand) {
   if (hand.indexOf('J') === -1) return hand;
 
   let cards = hand.split('');
@@ -70,28 +70,20 @@ function getHandType(hand) {
 
   let differentCardsCount = Object.keys(cardsInHand).length;
   if (differentCardsCount === 1) {
-    return 7;
+    return 7;//five-of-a-kind
   }
   if (differentCardsCount === 2) {
     let isFourOfAKind = Object.values(cardsInHand).some((cardCount) => cardCount === 4);
-    if (isFourOfAKind === true) {
-      return 6;
-    } else {
-      return 5;
-    }
+    return isFourOfAKind === true ? 6 : 5;//four-of-a-kind || full-house
   }
   if (differentCardsCount === 3) {
     let isThreeOfAKind = Object.values(cardsInHand).some((cardCount) => cardCount === 3);
-    if (isThreeOfAKind === true) {
-      return 4;
-    } else {
-      return 3;
-    }
+    return isThreeOfAKind === true ? 4 : 3;//three-of-a-kind || two-pair
   }
   if (differentCardsCount === 4) {
-    return 2;
+    return 2;//one-pair
   }
-  return 1;
+  return 1;//high-card
 }
 
 function firstPart(rows) {
@@ -113,8 +105,7 @@ function secondPart(rows) {
 
   let hands = rows.map(row => {
     let [hand, bid] = row.split(' ');
-    maximizedHand = maximizeHand(hand);
-    return { type: getHandType(maximizedHand), hand, bid: +bid };
+    return { type: getHandType(maximize(hand)), hand, bid: +bid };
   });
   sortHands(hands, 'second-part');
 
