@@ -1,6 +1,14 @@
 const fs = require('node:fs/promises');
 
-function sortHands(hands, mode) {
+function getCardCount(hand) {
+  let cards = hand.split('');
+  return cards.reduce((dict, card) => {
+    dict[card] = (dict[card] ?? 0) + 1;
+    return dict;
+  }, {});
+}
+
+function getTotalWinning(hands, mode) {
   hands.sort((a, b) => {
     let type = a.type - b.type;
     if (type !== 0) return type;
@@ -12,32 +20,22 @@ function sortHands(hands, mode) {
 
     return 0;
   });
+  return hands.reduce((sum, result, i) => sum + (result.bid * (1 + i)), 0);
 }
 
 function convertCardToNumber(card, mode) {
-  let cardToNumber = undefined;
   if (mode === 'first-part') {
-    cardToNumber = { 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
-  } else {
-    cardToNumber = { 'J': 1, 'T': 10, 'Q': 11, 'K': 12, 'A': 13 };
+    return ({ 'T': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 })[card] ?? (+card);
   }
-  return cardToNumber[card] ?? (+card);
+  return ({ 'J': 1, 'T': 10, 'Q': 11, 'K': 12, 'A': 13 })[card] ?? (+card);
 }
 
 function maximize(hand) {
   if (hand.indexOf('J') === -1) return hand;
 
-  let cards = hand.split('');
-  let cardsInHand = {};
-  for (let i = 0; i < cards.length; i++) {
-    if (cardsInHand[cards[i]] == null) cardsInHand[cards[i]] = 0;
-    cardsInHand[cards[i]]++;
-  }
+  let cardsInHand = getCardCount(hand);
+  let type = getHandType(hand, cardsInHand);
 
-  let type = getHandType(hand);
-  if (type === 7) {
-    return 'AAAAA';
-  }
   let cardCountToCheck = 1;
   if (type === 6 || type === 5) {
     cardCountToCheck = 5 - cardsInHand['J'];
@@ -54,64 +52,56 @@ function maximize(hand) {
       }
     }
   }
+  let card = 'A';//five-of-a-kind failsafe
   let cardEntries = Object.entries(cardsInHand).filter(([card, cardCount]) => card !== 'J' && cardCount === cardCountToCheck);
-  cardEntries.sort((a, b) => convertCardToNumber(b[0], 'second-part') - convertCardToNumber(a[0], 'second-part'));
-  let card = cardEntries[0][0];
+  if (cardEntries.length > 0) {
+    cardEntries.sort((a, b) => convertCardToNumber(b[0], 'second-part') - convertCardToNumber(a[0], 'second-part'));
+    card = cardEntries[0][0];
+  }
   return hand.split('J').join(card);
 }
 
-function getHandType(hand) {
-  let cardsInHand = {};
-  let cards = hand.split('');
-  for (let i = 0; i < cards.length; i++) {
-    if (cardsInHand[cards[i]] == null) cardsInHand[cards[i]] = 0;
-    cardsInHand[cards[i]]++;
+function getHandType(hand, cardsInHand) {
+  if (cardsInHand == null) {
+    cardsInHand = getCardCount(hand);
   }
 
-  let differentCardsCount = Object.keys(cardsInHand).length;
-  if (differentCardsCount === 1) {
+  let cardValues = Object.values(cardsInHand);
+  cardValues.sort((a, b) => b - a);
+  
+  let differentCardsCount = cardValues.length;
+
+  if (cardValues[0] === 5) {
     return 7;//five-of-a-kind
   }
-  if (differentCardsCount === 2) {
-    let isFourOfAKind = Object.values(cardsInHand).some((cardCount) => cardCount === 4);
-    return isFourOfAKind === true ? 6 : 5;//four-of-a-kind || full-house
+  if (cardValues[0] === 4) {
+    return 6; //four-of-a-kind;
   }
-  if (differentCardsCount === 3) {
-    let isThreeOfAKind = Object.values(cardsInHand).some((cardCount) => cardCount === 3);
-    return isThreeOfAKind === true ? 4 : 3;//three-of-a-kind || two-pair
+  if (cardValues[0] === 3) {
+    return differentCardsCount === 2 ? 5 : 4;//full-house || three-of-a-kind
   }
-  if (differentCardsCount === 4) {
-    return 2;//one-pair
+  if (cardValues[0] === 2) {
+    return differentCardsCount === 3 ? 3 : 2;//two-pair || one-pair
   }
   return 1;//high-card
 }
 
 function firstPart(rows) {
-  let totalWinnings = 0;
-
   let hands = rows.map(row => {
     let [hand, bid] = row.split(' ');
     return { type: getHandType(hand), hand, bid: +bid };
   });
-  sortHands(hands, 'first-part');
 
-  totalWinnings = hands.map((result, i) => result.bid * (1 + i)).reduce((sum, winning) => sum + winning, 0);
-
-  return totalWinnings;
+  return getTotalWinning(hands, 'first-part');
 }
 
 function secondPart(rows) {
-  let totalWinnings = 0;
-
   let hands = rows.map(row => {
     let [hand, bid] = row.split(' ');
     return { type: getHandType(maximize(hand)), hand, bid: +bid };
   });
-  sortHands(hands, 'second-part');
 
-  totalWinnings = hands.map((result, i) => result.bid * (1 + i)).reduce((sum, winning) => sum + winning, 0);
-
-  return totalWinnings;
+  return getTotalWinning(hands, 'second-part');
 }
 
 fs.readFile('./advent-of-code-2023/inputs/day-7.txt', { encoding: 'utf8' }).then((data) => {
