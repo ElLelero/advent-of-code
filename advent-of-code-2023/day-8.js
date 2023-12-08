@@ -55,8 +55,8 @@ function secondPart(rows) {
     }
   }
   let concurrentSteps = nodesSteps[0];
-  for (let j = 1; j < nodesSteps.length; j++) {
-    concurrentSteps = lcm(concurrentSteps, nodesSteps[j]);
+  for (let i = 1; i < nodesSteps.length; i++) {
+    concurrentSteps = lcm(concurrentSteps, nodesSteps[i]);
   }
   return concurrentSteps;
 }
