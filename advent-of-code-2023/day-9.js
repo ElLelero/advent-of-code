@@ -15,21 +15,6 @@ function getNextFromNumbers(numbers) {
   return numbers[numbers.length - 1] + getNextFromNumbers(intervals);
 }
 
-function getPreviousFromNumbers(numbers) {
-  let intervals = [];
-  let intervalsSet = new Set();
-  for (let i = 0; i < numbers.length - 1; i++) {
-    let temp = numbers[i + 1] - numbers[i];
-    intervals.push(temp);
-    intervalsSet.add(temp);
-  }
-  if (intervalsSet.size === 1) {
-    return numbers[0] - intervals[0];
-  }
-
-  return numbers[0] - getPreviousFromNumbers(intervals);
-}
-
 function firstPart(rows) {
   return rows.reduce((sum, row) => {
     let numbers = row.split(' ').map(n => +n);
@@ -40,7 +25,8 @@ function firstPart(rows) {
 function secondPart(rows) {
   return rows.reduce((sum, row) => {
     let numbers = row.split(' ').map(n => +n);
-    return sum + getPreviousFromNumbers(numbers);
+    numbers.reverse();
+    return sum + getNextFromNumbers(numbers);
   }, 0);
 }
 
