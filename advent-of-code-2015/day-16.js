@@ -36,6 +36,7 @@ function secondPart(data, detectedCompounds) {
   for (let i = 0; i < rows.length; i++) {
     aunts.push(parse(rows[i]));
   }
+  
   let finalAunts = [...aunts];
   finalAunts = finalAunts.filter(a => a.rememberedCompounds.cats == null || a.rememberedCompounds.cats > detectedCompounds.cats);
   finalAunts = finalAunts.filter(a => a.rememberedCompounds.trees == null || a.rememberedCompounds.trees > detectedCompounds.trees);
