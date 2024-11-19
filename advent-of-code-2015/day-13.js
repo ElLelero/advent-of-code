@@ -27,7 +27,7 @@ function firstPart(data) {
   let maxHappiness = undefined;
 
   let people = [...peopleSet];
-  let tableCombinations = combinations(people);
+  let tableCombinations = permutations(people);
   for (let i = 0; i < tableCombinations.length; i++) {
     let [A, B, C, D, E, F, G, H] = tableCombinations[i];
     let amountAB = dictionary[A][B] + dictionary[B][A];
@@ -68,7 +68,7 @@ function secondPart(data) {
 
   let maxHappiness = undefined;
   let people = [...peopleSet];
-  let tableCombinations = combinations(people);
+  let tableCombinations = permutations(people);
   for (let n = 0; n < tableCombinations.length; n++) {
     let [A, B, C, D, E, F, G, H, I] = tableCombinations[n];
     let amountAB = dictionary[A][B] + dictionary[B][A];
@@ -95,7 +95,7 @@ function secondPart(data) {
 }
 
 
-function combinations(elements) {
+function permutations(elements) {
   if ((elements ?? []).length === 0) return [];
   if ((elements ?? []).length === 1) return [[elements[0]]];
 
@@ -104,7 +104,7 @@ function combinations(elements) {
     let element = elements[i];
     let subElements = [...elements];
     subElements.splice(i, 1);
-    let subResults = combinations(subElements);
+    let subResults = permutations(subElements);
     for (let j = 0; j < subResults.length; j++) {
       results.push([
         element,
