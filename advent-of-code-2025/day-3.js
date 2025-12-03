@@ -1,10 +1,10 @@
 const fs = require('node:fs/promises');
 
-function findMaxInRange(arr, startIndex, length) {
-  let max = arr[startIndex];
+function findMaxInRange(arr, length) {
+  let max = arr[0];
   let index = 0;
 
-  for (let j = startIndex + 1; j < startIndex + length; j++) {
+  for (let j = 1; j < length && j < arr.length; j++) {
     let element = arr[j];
     if (element > max) {
       max = element;
@@ -21,7 +21,7 @@ function firstPart(banks) {
     let batteries = banks[i].split('').map(battery => +(battery));
     let batteryValue = 0;
     for (let j = 2 - 1; j >= 0; j--) {
-      let [max, index] = findMaxInRange(batteries, 0, batteries.length - j);
+      let [max, index] = findMaxInRange(batteries, batteries.length - j);
       batteries.splice(0, index + 1);
       batteryValue = (batteryValue * 10) + max;
     }
@@ -37,9 +37,9 @@ function secondPart(banks) {
 
   for (let i = 0; i < banks.length; i++) {
     let batteries = banks[i].split('').map(battery => +(battery));
-    let batteryValue = (0);
+    let batteryValue = 0;
     for (let j = 12 - 1; j >= 0; j--) {
-      let [max, index] = findMaxInRange(batteries, 0, batteries.length - j);
+      let [max, index] = findMaxInRange(batteries, batteries.length - j);
       batteries.splice(0, index + 1);
       batteryValue = (batteryValue * 10) + max;
     }
